@@ -26,7 +26,6 @@ public class PaymentServiceTest {
     }
 
     @Test
-
     void 결제_승인_요청시_200_OK() {
         Payment dummyPayment = new Payment("paymentKey", "orderId", 1000, "NORMAL");
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
