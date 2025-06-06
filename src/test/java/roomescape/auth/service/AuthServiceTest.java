@@ -20,7 +20,7 @@ import roomescape.user.domain.dto.UserResponseDto;
 import roomescape.user.fixture.UserFixture;
 import roomescape.user.repository.UserRepository;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class AuthServiceTest {
 
