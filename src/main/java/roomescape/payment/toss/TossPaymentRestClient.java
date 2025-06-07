@@ -16,13 +16,12 @@ public class TossPaymentRestClient {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
-    public TossPaymentRestClient(RestClient tossPayRestClient, ObjectMapper objectMapper) {
-        this.restClient = tossPayRestClient;
+    public TossPaymentRestClient(RestClient tosspaymentRestClient, ObjectMapper objectMapper) {
+        this.restClient = tosspaymentRestClient;
         this.objectMapper = objectMapper;
     }
 
     public Payment confirmPayment(PaymentRequestDto requestDto) {
-
         return restClient.post()
                 .uri("/v1/payments/confirm")
                 .body(requestDto)
