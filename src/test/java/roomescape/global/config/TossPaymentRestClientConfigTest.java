@@ -36,6 +36,13 @@ class RestClientConfigTest {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
+        TossPaymentProperties props = new TossPaymentProperties(
+                mockWebServer.url("/").toString(),
+                "test_sk_secret",
+                1000,
+                2000
+        );
+
         RestClientConfig config = new RestClientConfig(
                 "test_sk_secret",
                 String.format("http://localhost:%s", mockWebServer.getPort()),

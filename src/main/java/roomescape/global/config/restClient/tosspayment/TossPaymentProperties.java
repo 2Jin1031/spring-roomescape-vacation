@@ -5,10 +5,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "payment.pg.toss-payment")
 public class TossPaymentProperties {
 
-    private String baseUrl;
-    private String secretKey;
-    private int connectTimeout;
-    private int readTimeout;
+    private final String baseUrl;
+    private final String secretKey;
+    private final int connectTimeout;
+    private final int readTimeout;
+
+    public TossPaymentProperties(String baseUrl, String secretKey, int connectTimeout, int readTimeout) {
+        this.baseUrl = baseUrl;
+        this.secretKey = secretKey;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+    }
 
     public String getBaseUrl() {
         return baseUrl;
