@@ -14,10 +14,11 @@ import roomescape.payment.toss.domain.TossErrorResponse;
 public class TossPaymentRestClient {
 
     private final RestClient restClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public TossPaymentRestClient(RestClient tossPayRestClient) {
+    public TossPaymentRestClient(RestClient tossPayRestClient, ObjectMapper objectMapper) {
         this.restClient = tossPayRestClient;
+        this.objectMapper = objectMapper;
     }
 
     public Payment confirmPayment(PaymentRequestDto requestDto) {
