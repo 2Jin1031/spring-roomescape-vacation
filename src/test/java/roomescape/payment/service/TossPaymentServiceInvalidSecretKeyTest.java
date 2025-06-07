@@ -7,28 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.toss.service.TossPaymentService;
 
 @TestPropertySource(properties = {
-        "toss.payment.base-url=https://baseurlisinvalid"
+        "toss.payment.secret-key=tosstasstosstasstoss"
 })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class PaymentServiceInvalidBaseUrlTest {
+public class TossPaymentServiceInvalidSecretKeyTest {
 
     @Autowired
     private TossPaymentService paymentService;
 
-    @DisplayName("잘못된 baseUrl로 요청했을 때 예외 발생")
+    @DisplayName("secretKey가 유효하지 않을 때 예외 발생 : RestClientException")
     @Test
-    void approve_throwsException_byInvalidBaseUrl() {
+    void approve_throwsException_byInvalidSecretKey() {
         // given
         PaymentRequestDto dto = new PaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
 
         // when & then
         Assertions.assertThatThrownBy(
                 () -> paymentService.approve(dto)
-        ).isInstanceOf(ResourceAccessException.class);
+        ).isInstanceOf(RestClientException.class);
     }
 }

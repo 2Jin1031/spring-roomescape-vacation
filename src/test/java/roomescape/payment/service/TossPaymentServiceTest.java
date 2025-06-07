@@ -8,13 +8,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import roomescape.payment.global.domain.Payment;
+import roomescape.payment.global.domain.TossPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
 import roomescape.payment.toss.TossPaymentRestClient;
 import roomescape.payment.toss.service.TossPaymentService;
 
-public class PaymentServiceTest {
+public class TossPaymentServiceTest {
 
     private final TossPaymentRestClient mockRestClient = mock(TossPaymentRestClient.class);
 
@@ -27,9 +28,10 @@ public class PaymentServiceTest {
 
     @Test
     void 결제_승인_요청시_200_OK() {
-        Payment dummyPayment = new Payment("paymentKey", "orderId", 1000, "NORMAL");
+        TossPayment dummyTossPayment = new TossPayment("paymentKey", "orderId", 1000, "NORMAL");
+        PaymentResponseDto paymentResponseDto = new PaymentResponseDto("orderId", 1000, "NORMAL");
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
-                .thenReturn(dummyPayment);
+                .thenReturn(paymentResponseDto);
 
         TossPaymentService paymentService = new TossPaymentService(mockRestClient);
 

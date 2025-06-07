@@ -5,8 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
-import roomescape.payment.global.domain.Payment;
+import roomescape.payment.global.domain.TossPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
 import roomescape.payment.toss.domain.TossErrorResponse;
 
@@ -21,16 +22,18 @@ public class TossPaymentRestClient {
         this.objectMapper = objectMapper;
     }
 
-    public Payment confirmPayment(PaymentRequestDto requestDto) {
-        return restClient.post()
+    public PaymentResponseDto confirmPayment(PaymentRequestDto requestDto) {
+        TossPayment tossPayment = restClient.post()
                 .uri("/v1/payments/confirm")
                 .body(requestDto)
                 .retrieve()
                 .onStatus(
                         statusCode -> statusCode.is4xxClientError() || statusCode.is5xxServerError(), getErrorHandler()
                 )
-                .toEntity(Payment.class)
+                .toEntity(TossPayment.class)
                 .getBody();
+
+        return PaymentResponseDto.from(tossPayment);
     }
 
     private ErrorHandler getErrorHandler() {

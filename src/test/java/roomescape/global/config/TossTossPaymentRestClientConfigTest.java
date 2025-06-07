@@ -20,6 +20,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import roomescape.global.config.restClient.tosspayment.TossPaymentProperties;
+import roomescape.global.config.restClient.tosspayment.TossPaymentRestClientConfig;
 
 @SpringBootTest
 @TestPropertySource(properties = {
@@ -43,12 +45,8 @@ class RestClientConfigTest {
                 2000
         );
 
-        RestClientConfig config = new RestClientConfig(
-                "test_sk_secret",
-                String.format("http://localhost:%s", mockWebServer.getPort()),
-                1000,
-                2000);
-        restClient = config.restClient();
+        TossPaymentRestClientConfig config = new TossPaymentRestClientConfig(props);
+        restClient = config.tosspaymentRestClient();
     }
 
     @AfterEach
