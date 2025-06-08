@@ -12,10 +12,10 @@ import roomescape.payment.global.domain.TossPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
+import roomescape.payment.global.service.PaymentService;
 import roomescape.payment.toss.TossPaymentRestClient;
-import roomescape.payment.toss.service.TossPaymentService;
 
-public class TossPaymentServiceTest {
+public class PaymentServiceTest {
 
     private final TossPaymentRestClient mockRestClient = mock(TossPaymentRestClient.class);
 
@@ -33,7 +33,7 @@ public class TossPaymentServiceTest {
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
                 .thenReturn(paymentResponseDto);
 
-        TossPaymentService paymentService = new TossPaymentService(mockRestClient);
+        PaymentService paymentService = new PaymentService(mockRestClient);
 
         Assertions.assertThatCode(
                 () -> paymentService.approve(paymentRequestDto)
@@ -47,7 +47,7 @@ public class TossPaymentServiceTest {
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
                 .thenThrow(new InvalidPaymentException(HttpStatus.BAD_REQUEST));
 
-        TossPaymentService paymentService = new TossPaymentService(mockRestClient);
+        PaymentService paymentService = new PaymentService(mockRestClient);
 
         Assertions.assertThatThrownBy(
                 () -> paymentService.approve(dto)

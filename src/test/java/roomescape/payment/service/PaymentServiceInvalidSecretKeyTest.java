@@ -9,16 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestClientException;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
-import roomescape.payment.toss.service.TossPaymentService;
+import roomescape.payment.global.service.PaymentService;
 
 @TestPropertySource(properties = {
         "toss.payment.secret-key=tosstasstosstasstoss"
 })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class TossPaymentServiceInvalidSecretKeyTest {
+public class PaymentServiceInvalidSecretKeyTest {
 
     @Autowired
-    private TossPaymentService paymentService;
+    private PaymentService paymentService;
 
     @DisplayName("secretKey가 유효하지 않을 때 예외 발생 : RestClientException")
     @Test

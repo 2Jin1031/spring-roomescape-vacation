@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
+import roomescape.payment.global.PaymentRestClient;
 import roomescape.payment.global.domain.TossPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PaymentResponseDto;
@@ -12,7 +13,7 @@ import roomescape.payment.global.exception.InvalidPaymentException;
 import roomescape.payment.toss.domain.TossErrorResponse;
 
 @Component
-public class TossPaymentRestClient {
+public class TossPaymentRestClient implements PaymentRestClient {
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
