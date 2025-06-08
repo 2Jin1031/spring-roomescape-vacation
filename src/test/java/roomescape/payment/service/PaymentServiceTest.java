@@ -13,7 +13,7 @@ import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
 import roomescape.payment.global.service.PaymentService;
-import roomescape.payment.toss.TossPaymentRestClient;
+import roomescape.payment.tosspayment.TossPaymentRestClient;
 
 public class PaymentServiceTest {
 

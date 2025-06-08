@@ -1,4 +1,4 @@
-package roomescape.payment.toss;
+package roomescape.payment.tosspayment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,7 @@ import roomescape.payment.global.domain.TossPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
-import roomescape.payment.toss.domain.TossErrorResponse;
+import roomescape.payment.tosspayment.domain.TossErrorResponse;
 
 @Component
 public class TossPaymentRestClient implements PaymentRestClient {

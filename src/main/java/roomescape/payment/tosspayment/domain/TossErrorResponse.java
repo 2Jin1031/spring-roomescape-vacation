@@ -1,4 +1,4 @@
-package roomescape.payment.toss.domain;
+package roomescape.payment.tosspayment.domain;
 
 public record TossErrorResponse(
     String code,
