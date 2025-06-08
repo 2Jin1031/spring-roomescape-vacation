@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.admin.domain.dto.SearchReservationRequestDto;
+import roomescape.payment.global.domain.PgPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PgPaymentDataDto;
+import roomescape.payment.global.repository.PaymentRepository;
 import roomescape.payment.global.service.PaymentService;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.dto.ReservationInfo;
@@ -34,15 +37,17 @@ public class ReservationService {
     private final ReservationTimeRepository reservationTimeRepository;
     private final ThemeRepository themeRepository;
     private final WaitingRepository waitingRepository;
+    private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
 
     public ReservationService(ReservationRepository repository,
                               ReservationTimeRepository reservationTimeRepository, ThemeRepository themeRepository,
-                              WaitingRepository waitingRepository, PaymentService paymentService) {
+                              WaitingRepository waitingRepository, PaymentRepository paymentRepository, PaymentService paymentService) {
         this.repository = repository;
         this.reservationTimeRepository = reservationTimeRepository;
         this.themeRepository = themeRepository;
         this.waitingRepository = waitingRepository;
+        this.paymentRepository = paymentRepository;
         this.paymentService = paymentService;
     }
 
@@ -55,8 +60,8 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDto add(ReservationRequestDto requestDto, User user) {
+        validateDuplicateDateTime(requestDto);
         Reservation reservation = convertReservation(requestDto, user);
-        validateDuplicateDateTime(reservation);
         Reservation savedReservation = repository.save(reservation);
         return convertReservationResponseDto(savedReservation);
     }
@@ -64,10 +69,11 @@ public class ReservationService {
     @Transactional
     public ReservationResponseDto addWithPayment(ReservationWithPaymentDto requestDto, User user) {
         ReservationRequestDto reservationRequestDto = convertReservationRequestDto(requestDto);
-        Reservation reservation = convertReservation(reservationRequestDto, user);
-        validateDuplicateDateTime(reservation);
+        validateDuplicateDateTime(reservationRequestDto);
         PaymentRequestDto paymentRequestDto = convertPaymentRequestDto(requestDto);
-        paymentService.approve(paymentRequestDto);
+        PgPaymentDataDto pgPaymentDataDto = paymentService.approve(paymentRequestDto);
+        PgPayment savedPgPayment = paymentRepository.save(pgPaymentDataDto.toEntity());
+        Reservation reservation = convertReservation(reservationRequestDto, user, savedPgPayment);
         Reservation savedReservation = repository.save(reservation);
         return convertReservationResponseDto(savedReservation);
     }
@@ -107,10 +113,12 @@ public class ReservationService {
                 .orElseThrow(() -> new NotFoundReservationException("해당 예약 id가 존재하지 않습니다."));
     }
 
-    private void validateDuplicateDateTime(Reservation inputReservation) {
+    private void validateDuplicateDateTime(ReservationRequestDto dto) {
+        ReservationTime reservationTime = reservationTimeRepository.findById(dto.timeId())
+                .orElseThrow(InvalidReservationTimeException::new);
         boolean exists = repository.existsByDateAndReservationTime(
-                inputReservation.getDate(),
-                inputReservation.getReservationTime()
+                dto.date(),
+                reservationTime
         );
         if (exists) {
             throw new DuplicateReservationException();
@@ -132,12 +140,16 @@ public class ReservationService {
     }
 
     private Reservation convertReservation(ReservationRequestDto dto, User user) {
+        return convertReservation(dto, user, null);
+    }
+
+    private Reservation convertReservation(ReservationRequestDto dto, User user, PgPayment payment) {
         ReservationTime reservationTime = reservationTimeRepository.findById(dto.timeId())
                 .orElseThrow(InvalidReservationTimeException::new);
         Theme theme = themeRepository.findById(dto.themeId())
                 .orElseThrow(InvalidThemeException::new);
 
-        return dto.toEntity(reservationTime, theme, user);
+        return dto.toEntity(reservationTime, theme, user, payment);
     }
 
     private ReservationResponseDto convertReservationResponseDto(Reservation reservation) {

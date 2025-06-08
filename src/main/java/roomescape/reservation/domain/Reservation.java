@@ -59,8 +59,15 @@ public class Reservation {
         return new Reservation(null, date, status, reservationTime, theme, user, payment);
     }
 
+    public static Reservation of(LocalDate date, ReservationStatus status, ReservationTime reservationTime, Theme theme,
+                                 User user) {
+        LocalDateTime dateTime = LocalDateTime.of(date, reservationTime.getStartAt());
+        validateTense(dateTime);
+        return new Reservation(null, date, status, reservationTime, theme, user, null);
+    }
+
     public static Reservation ofWaiting(Waiting waiting) {
-        return new Reservation(null, waiting.getDate(), ReservationStatus.BOOKED, waiting.getTime(), waiting.getTheme(), waiting.getMember(), waiting.getPgPayment());
+        return new Reservation(null, waiting.getDate(), ReservationStatus.BOOKED, waiting.getTime(), waiting.getTheme(), waiting.getMember(), null);
     }
 
     private static void validateTense(LocalDateTime dateTime) {
@@ -104,5 +111,9 @@ public class Reservation {
 
     public User getUser() {
         return user;
+    }
+
+    public PgPayment getPgPayment() {
+        return pgPayment;
     }
 }
