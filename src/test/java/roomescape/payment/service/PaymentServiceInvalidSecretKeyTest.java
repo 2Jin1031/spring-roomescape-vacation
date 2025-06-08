@@ -12,7 +12,7 @@ import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.service.PaymentService;
 
 @TestPropertySource(properties = {
-        "toss.payment.secret-key=tosstasstosstasstoss"
+        "payment.pg.toss-payment.secret-key=tosstasstosstasstoss"
 })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PaymentServiceInvalidSecretKeyTest {

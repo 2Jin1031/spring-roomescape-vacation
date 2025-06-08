@@ -12,7 +12,7 @@ import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.service.PaymentService;
 
 @TestPropertySource(properties = {
-        "toss.payment.base-url=https://baseurlisinvalid"
+        "payment.pg.toss-payment.base-url=https://baseurlisinvalid"
 })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TossPaymentServiceInvalidBaseUrlTest {
