@@ -6,9 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
-import roomescape.payment.global.domain.PgPayment;
 import roomescape.reservationtime.domain.ReservationTime;
 import roomescape.theme.domain.Theme;
 import roomescape.user.domain.User;
@@ -34,22 +32,18 @@ public class Waiting {
     @JoinColumn(name = "member_id")
     private User member;
 
-    @OneToOne
-    private PgPayment pgPayment;
-
     protected Waiting() {
     }
 
-    public Waiting(LocalDate date, ReservationTime time, Theme theme, User member, PgPayment pgPayment) {
+    public Waiting(LocalDate date, ReservationTime time, Theme theme, User member) {
         this.date = date;
         this.time = time;
         this.theme = theme;
         this.member = member;
-        this.pgPayment = pgPayment;
     }
 
-    public static Waiting of(LocalDate date, ReservationTime reservationTime, Theme theme, User user, PgPayment pgPayment) {
-        return new Waiting(date, reservationTime, theme, user, pgPayment);
+    public static Waiting of(LocalDate date, ReservationTime reservationTime, Theme theme, User user) {
+        return new Waiting(date, reservationTime, theme, user);
     }
 
     public boolean isSameMember(User compare) {
@@ -74,9 +68,5 @@ public class Waiting {
 
     public User getMember() {
         return member;
-    }
-
-    public PgPayment getPgPayment() {
-        return pgPayment;
     }
 }
