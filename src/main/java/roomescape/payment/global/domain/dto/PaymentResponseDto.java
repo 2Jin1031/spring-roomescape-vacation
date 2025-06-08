@@ -1,10 +1,10 @@
 package roomescape.payment.global.domain.dto;
 
-import roomescape.payment.global.domain.TossPayment;
+import roomescape.payment.global.domain.PgPayment;
 
 public record PaymentResponseDto(String orderId, int amount, String paymentKey) {
 
-    public static PaymentResponseDto from(TossPayment tossPayment) {
-        return new PaymentResponseDto(tossPayment.getOrderId(), tossPayment.getAmount(), tossPayment.getPaymentKey());
+    public static PaymentResponseDto from(PgPayment pgPayment) {
+        return new PaymentResponseDto(pgPayment.getOrderId(), pgPayment.getAmount(), pgPayment.getPaymentKey());
     }
 }

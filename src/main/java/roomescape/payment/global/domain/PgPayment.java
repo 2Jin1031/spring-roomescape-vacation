@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class TossPayment {
+public class PgPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,13 +14,12 @@ public class TossPayment {
     private String paymentKey;
     private String orderId;
     private int amount;
-
     private String paymentType;
 
-    protected TossPayment() {
+    protected PgPayment() {
     }
 
-    public TossPayment(String paymentKey, String orderId, int amount, String paymentType) {
+    public PgPayment(String paymentKey, String orderId, int amount, String paymentType) {
         this.paymentKey = paymentKey;
         this.orderId = orderId;
         this.amount = amount;

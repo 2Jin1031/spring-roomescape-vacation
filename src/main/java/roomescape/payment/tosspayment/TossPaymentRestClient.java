@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 import roomescape.payment.global.PaymentRestClient;
-import roomescape.payment.global.domain.TossPayment;
+import roomescape.payment.global.domain.PgPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PaymentResponseDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
@@ -24,17 +24,17 @@ public class TossPaymentRestClient implements PaymentRestClient {
     }
 
     public PaymentResponseDto confirmPayment(PaymentRequestDto requestDto) {
-        TossPayment tossPayment = restClient.post()
+        PgPayment pgPayment = restClient.post()
                 .uri("/v1/payments/confirm")
                 .body(requestDto)
                 .retrieve()
                 .onStatus(
                         statusCode -> statusCode.is4xxClientError() || statusCode.is5xxServerError(), getErrorHandler()
                 )
-                .toEntity(TossPayment.class)
+                .toEntity(PgPayment.class)
                 .getBody();
 
-        return PaymentResponseDto.from(tossPayment);
+        return PaymentResponseDto.from(pgPayment);
     }
 
     private ErrorHandler getErrorHandler() {

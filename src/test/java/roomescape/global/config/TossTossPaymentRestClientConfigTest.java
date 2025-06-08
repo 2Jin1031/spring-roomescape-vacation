@@ -28,7 +28,7 @@ import roomescape.global.config.restClient.tosspayment.TossPaymentRestClientConf
         "toss.payment.secret-key=test_sk_secret"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class TossPaymentRestClientConfigTest {
+class PgPaymentRestClientConfigTest {
 
     private MockWebServer mockWebServer;
     private RestClient restClient;
