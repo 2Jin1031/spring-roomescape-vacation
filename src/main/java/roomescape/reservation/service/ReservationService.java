@@ -3,6 +3,7 @@ package roomescape.reservation.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.admin.domain.dto.SearchReservationRequestDto;
@@ -29,6 +30,7 @@ import roomescape.user.domain.User;
 import roomescape.waiting.domain.Waiting;
 import roomescape.waiting.repository.WaitingRepository;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class ReservationService {
@@ -68,13 +70,27 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDto addWithPayment(ReservationWithPaymentDto requestDto, User user) {
+        log.info("addWithPayment 요청 - 사용자 ID: {}, 요청 데이터: {}", user.getId(), requestDto);
+
         ReservationRequestDto reservationRequestDto = convertReservationRequestDto(requestDto);
         validateDuplicateDateTime(reservationRequestDto);
+        log.info("중복 예약 검사 통과 - 날짜: {}, 시간 ID: {}, 테마 ID: {}",
+                reservationRequestDto.date(), reservationRequestDto.timeId(), reservationRequestDto.themeId());
+
         PaymentRequestDto paymentRequestDto = convertPaymentRequestDto(requestDto);
+        log.info("결제 승인 시도 - PaymentKey: {}, OrderId: {}, 금액: {}",
+                paymentRequestDto.paymentKey(), paymentRequestDto.orderId(), paymentRequestDto.amount());
+
         PgPaymentDataDto pgPaymentDataDto = paymentService.approve(paymentRequestDto);
+        log.info("결제 승인 성공 - PG사 응답: {}", pgPaymentDataDto);
+
         PgPayment savedPgPayment = paymentRepository.save(pgPaymentDataDto.toEntity());
+        log.info("결제 정보 저장 완료 - Payment ID: {}", savedPgPayment.getId());
+
         Reservation reservation = convertReservation(reservationRequestDto, user, savedPgPayment);
         Reservation savedReservation = repository.save(reservation);
+        log.info("예약 저장 완료 - 예약 ID: {}", savedReservation.getId());
+
         return convertReservationResponseDto(savedReservation);
     }
 

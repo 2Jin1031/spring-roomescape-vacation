@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class PgPayment {
 
     @Id
@@ -24,21 +26,5 @@ public class PgPayment {
         this.orderId = orderId;
         this.amount = amount;
         this.paymentType = paymentType;
-    }
-
-    public String getPaymentKey() {
-        return paymentKey;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public String getPaymentType() {
-        return paymentType;
     }
 }
