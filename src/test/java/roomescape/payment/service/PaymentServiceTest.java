@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import roomescape.payment.global.domain.PgPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
-import roomescape.payment.global.domain.dto.PaymentResponseDto;
+import roomescape.payment.global.domain.dto.PgPaymentDataDto;
 import roomescape.payment.global.exception.InvalidPaymentException;
 import roomescape.payment.global.service.PaymentService;
 import roomescape.payment.tosspayment.TossPaymentRestClient;
@@ -29,9 +29,9 @@ public class PaymentServiceTest {
     @Test
     void 결제_승인_요청시_200_OK() {
         PgPayment pgPayment = new PgPayment("paymentKey", "orderId", 1000, "NORMAL");
-        PaymentResponseDto paymentResponseDto = new PaymentResponseDto("orderId", 1000, "NORMAL");
+        PgPaymentDataDto pgPaymentDataDto = new PgPaymentDataDto("paymentKey", "orderId", 1000, "NORMAL");
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
-                .thenReturn(paymentResponseDto);
+                .thenReturn(pgPaymentDataDto);
 
         PaymentService paymentService = new PaymentService(mockRestClient);
 
