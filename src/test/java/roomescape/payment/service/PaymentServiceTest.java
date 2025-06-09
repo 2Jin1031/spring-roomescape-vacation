@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import roomescape.payment.global.domain.PgPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PgPaymentDataDto;
-import roomescape.payment.global.exception.InvalidPaymentException;
+import roomescape.payment.global.exception.InvalidPgPaymentException;
 import roomescape.payment.global.service.PaymentService;
 import roomescape.payment.tosspayment.TossPaymentRestClient;
 
@@ -45,12 +45,12 @@ public class PaymentServiceTest {
         PaymentRequestDto dto = new PaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
 
         when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
-                .thenThrow(new InvalidPaymentException(HttpStatus.BAD_REQUEST));
+                .thenThrow(new InvalidPgPaymentException(HttpStatus.BAD_REQUEST));
 
         PaymentService paymentService = new PaymentService(mockRestClient);
 
         Assertions.assertThatThrownBy(
                 () -> paymentService.approve(dto)
-        ).isInstanceOf(InvalidPaymentException.class);
+        ).isInstanceOf(InvalidPgPaymentException.class);
     }
 }

@@ -1,6 +1,6 @@
 package roomescape.payment.tosspayment.domain;
 
-public record TossErrorResponse(
+public record TossPaymentErrorResponse(
     String code,
     String message
 ) {
