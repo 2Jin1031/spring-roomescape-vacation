@@ -23,13 +23,13 @@ public class TossPaymentRestClientConfig {
     @Bean
     public RestClient tosspaymentRestClient() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(properties.getConnectTimeout());
-        requestFactory.setReadTimeout(properties.getReadTimeout());
+        requestFactory.setConnectTimeout(properties.connectTimeout());
+        requestFactory.setReadTimeout(properties.readTimeout());
 
-        String basicAuthValue = encodeBasicAuth(properties.getSecretKey());
+        String basicAuthValue = encodeBasicAuth(properties.secretKey());
 
         return RestClient.builder()
-                .baseUrl(properties.getBaseUrl())
+                .baseUrl(properties.baseUrl())
                 .requestFactory(requestFactory)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, basicAuthValue)
                 .build();
