@@ -1,7 +1,9 @@
 package roomescape.payment.global.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class InvalidPgPaymentException extends RuntimeException {
 
     private final HttpStatus status;
@@ -15,9 +17,5 @@ public class InvalidPgPaymentException extends RuntimeException {
 
     public InvalidPgPaymentException(HttpStatus status) {
         this(DEFAULT_MESSAGE, status);
-    }
-
-    public HttpStatus getStatus() {
-        return status;
     }
 }
