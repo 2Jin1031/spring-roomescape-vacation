@@ -53,4 +53,18 @@ public class PgPaymentServiceTest {
                 () -> pgPaymentService.approve(dto)
         ).isInstanceOf(InvalidPgPaymentException.class);
     }
+
+    @Test
+    void 결제_승인_요청시_500에러가_발생하면_InvalidPaymentException_발생() {
+        PgPaymentRequestDto dto = new PgPaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
+
+        when(mockRestClient.confirmPayment(any(PgPaymentRequestDto.class)))
+                .thenThrow(new InvalidPgPaymentException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        PgPaymentService pgPaymentService = new PgPaymentService(mockRestClient);
+
+        Assertions.assertThatThrownBy(
+                () -> pgPaymentService.approve(dto)
+        ).isInstanceOf(InvalidPgPaymentException.class);
+    }
 }
