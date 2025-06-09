@@ -1,4 +1,4 @@
-package roomescape.auth.fixture;
+package roomescape.global.auth.fixture;
 
 import roomescape.global.auth.domain.dto.TokenRequestDto;
 

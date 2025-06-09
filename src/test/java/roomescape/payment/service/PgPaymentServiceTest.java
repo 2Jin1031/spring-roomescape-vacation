@@ -9,48 +9,48 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import roomescape.payment.global.domain.PgPayment;
-import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PgPaymentRequestDto;
 import roomescape.payment.global.domain.dto.PgPaymentDataDto;
 import roomescape.payment.global.exception.InvalidPgPaymentException;
-import roomescape.payment.global.service.PaymentService;
-import roomescape.payment.tosspayment.TossPaymentRestClient;
+import roomescape.payment.global.service.PgPaymentService;
+import roomescape.payment.tosspayment.TossPgPaymentRestClient;
 
-public class PaymentServiceTest {
+public class PgPaymentServiceTest {
 
-    private final TossPaymentRestClient mockRestClient = mock(TossPaymentRestClient.class);
+    private final TossPgPaymentRestClient mockRestClient = mock(TossPgPaymentRestClient.class);
 
-    private PaymentRequestDto paymentRequestDto;
+    private PgPaymentRequestDto pgPaymentRequestDto;
 
     @BeforeEach
     void setUp() {
-        paymentRequestDto = new PaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
+        pgPaymentRequestDto = new PgPaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
     }
 
     @Test
     void 결제_승인_요청시_200_OK() {
         PgPayment pgPayment = new PgPayment("paymentKey", "orderId", 1000, "NORMAL");
         PgPaymentDataDto pgPaymentDataDto = new PgPaymentDataDto("paymentKey", "orderId", 1000, "NORMAL");
-        when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
+        when(mockRestClient.confirmPayment(any(PgPaymentRequestDto.class)))
                 .thenReturn(pgPaymentDataDto);
 
-        PaymentService paymentService = new PaymentService(mockRestClient);
+        PgPaymentService pgPaymentService = new PgPaymentService(mockRestClient);
 
         Assertions.assertThatCode(
-                () -> paymentService.approve(paymentRequestDto)
+                () -> pgPaymentService.approve(pgPaymentRequestDto)
         ).doesNotThrowAnyException();
     }
 
     @Test
     void 결제_승인_요청시_400에러가_발생하면_InvalidPaymentException_발생() {
-        PaymentRequestDto dto = new PaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
+        PgPaymentRequestDto dto = new PgPaymentRequestDto("paymentKey", "orderId", 1000, "NORMAL");
 
-        when(mockRestClient.confirmPayment(any(PaymentRequestDto.class)))
+        when(mockRestClient.confirmPayment(any(PgPaymentRequestDto.class)))
                 .thenThrow(new InvalidPgPaymentException(HttpStatus.BAD_REQUEST));
 
-        PaymentService paymentService = new PaymentService(mockRestClient);
+        PgPaymentService pgPaymentService = new PgPaymentService(mockRestClient);
 
         Assertions.assertThatThrownBy(
-                () -> paymentService.approve(dto)
+                () -> pgPaymentService.approve(dto)
         ).isInstanceOf(InvalidPgPaymentException.class);
     }
 }

@@ -1,4 +1,4 @@
-package roomescape.config;
+package roomescape.global.config;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import roomescape.global.auth.domain.dto.TokenRequestDto;
 import roomescape.global.auth.domain.dto.TokenResponseDto;
-import roomescape.auth.fixture.AuthFixture;
+import roomescape.global.auth.fixture.AuthFixture;
 import roomescape.global.auth.service.AuthService;
 import roomescape.user.AdminTestDataConfig;
 import roomescape.user.MemberTestDataConfig;

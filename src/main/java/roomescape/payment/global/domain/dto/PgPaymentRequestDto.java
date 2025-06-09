@@ -2,10 +2,10 @@ package roomescape.payment.global.domain.dto;
 
 import roomescape.reservation.domain.dto.ReservationWithPaymentDto;
 
-public record PaymentRequestDto(String paymentKey, String orderId, int amount, String paymentType) {
+public record PgPaymentRequestDto(String paymentKey, String orderId, int amount, String paymentType) {
 
-    public static PaymentRequestDto ofReservationWithPaymentDto(ReservationWithPaymentDto requestDto) {
-        return new PaymentRequestDto(
+    public static PgPaymentRequestDto ofReservationWithPaymentDto(ReservationWithPaymentDto requestDto) {
+        return new PgPaymentRequestDto(
                 requestDto.paymentKey(),
                 requestDto.orderId(),
                 requestDto.amount(),

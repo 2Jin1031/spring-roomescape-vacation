@@ -1,4 +1,4 @@
-package roomescape.auth;
+package roomescape.global.auth;
 
 import io.jsonwebtoken.Claims;
 import org.assertj.core.api.SoftAssertions;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import roomescape.global.auth.JwtTokenProvider;
 import roomescape.global.auth.domain.dto.TokenInfoDto;
 import roomescape.user.domain.Role;
 

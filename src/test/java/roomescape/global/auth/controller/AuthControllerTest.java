@@ -1,4 +1,4 @@
-package roomescape.auth.controller;
+package roomescape.global.auth.controller;
 
 import io.jsonwebtoken.Claims;
 import io.restassured.RestAssured;
@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import roomescape.global.auth.JwtTokenProvider;
 import roomescape.global.auth.domain.dto.TokenRequestDto;
 import roomescape.global.auth.domain.dto.TokenResponseDto;
-import roomescape.auth.fixture.AuthFixture;
+import roomescape.global.auth.fixture.AuthFixture;
 import roomescape.global.auth.service.AuthService;
 import roomescape.user.domain.Role;
 import roomescape.user.domain.User;

@@ -1,4 +1,4 @@
-package roomescape.auth.service;
+package roomescape.global.auth.service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import roomescape.auth.fixture.AuthFixture;
+import roomescape.global.auth.fixture.AuthFixture;
 import roomescape.global.auth.domain.dto.TokenResponseDto;
 import roomescape.global.auth.exception.InvalidTokenException;
-import roomescape.global.auth.service.AuthService;
 import roomescape.user.domain.Role;
 import roomescape.user.domain.User;
 import roomescape.user.domain.dto.UserResponseDto;

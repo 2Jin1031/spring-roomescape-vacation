@@ -6,26 +6,26 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
-import roomescape.payment.global.PaymentRestClient;
+import roomescape.payment.global.PgPaymentRestClient;
 import roomescape.payment.global.domain.PgPayment;
-import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PgPaymentRequestDto;
 import roomescape.payment.global.domain.dto.PgPaymentDataDto;
 import roomescape.payment.global.exception.InvalidPgPaymentException;
 import roomescape.payment.tosspayment.domain.TossPaymentErrorResponse;
 
 @Component
-public class TossPaymentRestClient implements PaymentRestClient {
+public class TossPgPaymentRestClient implements PgPaymentRestClient {
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
-    public TossPaymentRestClient(RestClient tosspaymentRestClient, ObjectMapper objectMapper) {
+    public TossPgPaymentRestClient(RestClient tosspaymentRestClient, ObjectMapper objectMapper) {
         this.restClient = tosspaymentRestClient;
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public PgPaymentDataDto confirmPayment(PaymentRequestDto requestDto) {
+    public PgPaymentDataDto confirmPayment(PgPaymentRequestDto requestDto) {
         PgPayment pgPayment = restClient.post()
                 .uri("/v1/payments/confirm")
                 .body(requestDto)

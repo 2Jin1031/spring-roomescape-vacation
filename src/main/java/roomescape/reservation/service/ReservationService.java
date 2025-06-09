@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.admin.domain.dto.SearchReservationRequestDto;
 import roomescape.payment.global.domain.PgPayment;
-import roomescape.payment.global.domain.dto.PaymentRequestDto;
+import roomescape.payment.global.domain.dto.PgPaymentRequestDto;
 import roomescape.payment.global.domain.dto.PgPaymentDataDto;
 import roomescape.payment.global.repository.PaymentRepository;
-import roomescape.payment.global.service.PaymentService;
+import roomescape.payment.global.service.PgPaymentService;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.dto.ReservationInfo;
 import roomescape.reservation.domain.dto.ReservationRequestDto;
@@ -40,17 +40,17 @@ public class ReservationService {
     private final ThemeRepository themeRepository;
     private final WaitingRepository waitingRepository;
     private final PaymentRepository paymentRepository;
-    private final PaymentService paymentService;
+    private final PgPaymentService pgPaymentService;
 
     public ReservationService(ReservationRepository repository,
                               ReservationTimeRepository reservationTimeRepository, ThemeRepository themeRepository,
-                              WaitingRepository waitingRepository, PaymentRepository paymentRepository, PaymentService paymentService) {
+                              WaitingRepository waitingRepository, PaymentRepository paymentRepository, PgPaymentService pgPaymentService) {
         this.repository = repository;
         this.reservationTimeRepository = reservationTimeRepository;
         this.themeRepository = themeRepository;
         this.waitingRepository = waitingRepository;
         this.paymentRepository = paymentRepository;
-        this.paymentService = paymentService;
+        this.pgPaymentService = pgPaymentService;
     }
 
     public List<ReservationResponseDto> findAll() {
@@ -77,11 +77,11 @@ public class ReservationService {
         log.info("중복 예약 검사 통과 - 날짜: {}, 시간 ID: {}, 테마 ID: {}",
                 reservationRequestDto.date(), reservationRequestDto.timeId(), reservationRequestDto.themeId());
 
-        PaymentRequestDto paymentRequestDto = convertPaymentRequestDto(requestDto);
+        PgPaymentRequestDto pgPaymentRequestDto = convertPaymentRequestDto(requestDto);
         log.info("결제 승인 시도 - PaymentKey: {}, OrderId: {}, 금액: {}",
-                paymentRequestDto.paymentKey(), paymentRequestDto.orderId(), paymentRequestDto.amount());
+                pgPaymentRequestDto.paymentKey(), pgPaymentRequestDto.orderId(), pgPaymentRequestDto.amount());
 
-        PgPaymentDataDto pgPaymentDataDto = paymentService.approve(paymentRequestDto);
+        PgPaymentDataDto pgPaymentDataDto = pgPaymentService.approve(pgPaymentRequestDto);
         log.info("결제 승인 성공 - PG사 응답: {}", pgPaymentDataDto);
 
         PgPayment savedPgPayment = paymentRepository.save(pgPaymentDataDto.toEntity());
@@ -98,8 +98,8 @@ public class ReservationService {
         return ReservationRequestDto.ofReservationWithPaymentDto(requestDto);
     }
 
-    private PaymentRequestDto convertPaymentRequestDto(ReservationWithPaymentDto requestDto) {
-        return PaymentRequestDto.ofReservationWithPaymentDto(requestDto);
+    private PgPaymentRequestDto convertPaymentRequestDto(ReservationWithPaymentDto requestDto) {
+        return PgPaymentRequestDto.ofReservationWithPaymentDto(requestDto);
     }
 
     @Transactional
