@@ -42,8 +42,7 @@ public class TossPaymentRestClient implements PaymentRestClient {
         return httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError();
     }
 
-    @Override
-    public ErrorHandler getErrorHandler() {
+    private ErrorHandler getErrorHandler() {
         return (req, res) -> {
             TossPaymentErrorResponse error = objectMapper.readValue(res.getBody(), TossPaymentErrorResponse.class);
             HttpStatus status = HttpStatus.valueOf(res.getStatusCode().value());
