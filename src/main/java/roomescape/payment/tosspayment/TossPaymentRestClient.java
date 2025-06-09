@@ -2,6 +2,7 @@ package roomescape.payment.tosspayment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
@@ -9,8 +10,8 @@ import roomescape.payment.global.PaymentRestClient;
 import roomescape.payment.global.domain.PgPayment;
 import roomescape.payment.global.domain.dto.PaymentRequestDto;
 import roomescape.payment.global.domain.dto.PgPaymentDataDto;
-import roomescape.payment.global.exception.InvalidPaymentException;
-import roomescape.payment.tosspayment.domain.TossErrorResponse;
+import roomescape.payment.global.exception.InvalidPgPaymentException;
+import roomescape.payment.tosspayment.domain.TossPaymentErrorResponse;
 
 @Component
 public class TossPaymentRestClient implements PaymentRestClient {
@@ -23,25 +24,30 @@ public class TossPaymentRestClient implements PaymentRestClient {
         this.objectMapper = objectMapper;
     }
 
+    @Override
     public PgPaymentDataDto confirmPayment(PaymentRequestDto requestDto) {
         PgPayment pgPayment = restClient.post()
                 .uri("/v1/payments/confirm")
                 .body(requestDto)
                 .retrieve()
-                .onStatus(
-                        statusCode -> statusCode.is4xxClientError() || statusCode.is5xxServerError(), getErrorHandler()
-                )
+                .onStatus(this::isError, getErrorHandler())
                 .toEntity(PgPayment.class)
                 .getBody();
 
         return PgPaymentDataDto.of(pgPayment);
     }
 
-    private ErrorHandler getErrorHandler() {
+    @Override
+    public boolean isError(HttpStatusCode httpStatusCode) {
+        return httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError();
+    }
+
+    @Override
+    public ErrorHandler getErrorHandler() {
         return (req, res) -> {
-            TossErrorResponse error = objectMapper.readValue(res.getBody(), TossErrorResponse.class);
+            TossPaymentErrorResponse error = objectMapper.readValue(res.getBody(), TossPaymentErrorResponse.class);
             HttpStatus status = HttpStatus.valueOf(res.getStatusCode().value());
-            throw new InvalidPaymentException(error.message(), status);
+            throw new InvalidPgPaymentException(error.message(), status);
         };
     }
 }
