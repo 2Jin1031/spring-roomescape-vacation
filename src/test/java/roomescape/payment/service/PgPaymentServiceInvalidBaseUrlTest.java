@@ -15,7 +15,7 @@ import roomescape.payment.global.service.PgPaymentService;
         "payment.pg.toss-payment.base-url=https://baseurlisinvalid"
 })
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class PgPgPaymentServiceInvalidBaseUrlTest {
+public class PgPaymentServiceInvalidBaseUrlTest {
 
     @Autowired
     private PgPaymentService pgPaymentService;
