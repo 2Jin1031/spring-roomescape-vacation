@@ -10,6 +10,10 @@
 1. 프로젝트 실행
 2. `localhost:8080/redoc-static.html` 
 
+## 배포
+주소: http://13.124.105.159:8080
+API 명세서: http://13.124.105.159:8080/redoc-static.html
+
 ![img_1.png](img_1.png)
 # 기능 구현 목록
 
