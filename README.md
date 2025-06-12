@@ -3,16 +3,9 @@
 ## 프로젝트 구조 : ERD
 ![img.png|500](img.png)
 
-## API 명세서
-위치 :`resources/static/redoc-static.html`
-
-실행 방법:
-1. 프로젝트 실행
-2. `localhost:8080/redoc-static.html` 
-
 ## 배포
 주소: http://13.124.105.159:8080
-API 명세서: http://13.124.105.159:8080/redoc-static.html
+API 명세서: http://13.124.105.159:8080/swagger-ui/index.html#
 
 ![img_1.png](img_1.png)
 # 기능 구현 목록
