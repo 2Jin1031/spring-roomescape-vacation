@@ -2,6 +2,8 @@ spring:
   h2:
     console:
       enabled: true
+  profiles:
+    include: private
 
   datasource:
     url: jdbc:h2:mem:database
@@ -23,16 +25,16 @@ spring:
 security:
   jwt:
     token:
-      secret-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.ih1aovtQShabQ7l0cINw4k1fagApg3qLWiB8Kt59Lno
-      expire-length: 3600000
+      secret-key: ${JWT_SECRET_KEY}
+      expire-length: ${JWT_EXPIRE_LENGTH}
 
 payment:
   pg:
     toss-payment:
-      base-url: https://api.tosspayments.com
-      secret-key: test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
-      connect-timeout: 15000
-      read-timeout: 60000
+      base-url: ${PG_TOSS_PAYMENT_BASE_URL}
+      secret-key: ${PG_TOSS_PAYMENT_SECRET_KEY}
+      connect-timeout: ${PG_TOSS_PAYMENT_CONNECT_TIMEOUT}
+      read-timeout: ${PG_TOSS_PAYMENT_READ_TIMEOUT}
 logging:
   level:
     roomescape: debug
