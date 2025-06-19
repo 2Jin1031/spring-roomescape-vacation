@@ -3,10 +3,10 @@ package roomescape.reservation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@JdbcTest
+@DataJpaTest
 public class ReservationTableTest {
 
     @Autowired
@@ -22,7 +22,7 @@ public class ReservationTableTest {
         jdbcTemplate.update("INSERT INTO theme(name, description, thumbnail) VALUES ('Theme 1', '테마1 설명','썸네일')");
         jdbcTemplate.update("INSERT INTO users (role, name, email, password) VALUES ('ROLE_MEMBER', 'n1', 'e1', 'p1')");
         jdbcTemplate.update(
-                "INSERT INTO reservation (date, time_id, theme_id, user_id) VALUES ('2025-11-11', 1L, 1L, 1L)");
+                "INSERT INTO reservation (date, reservation_time_id, theme_id, user_id) VALUES ('2025-11-11', 1L, 1L, 1L)");
 
     }
 }
