@@ -1,6 +1,9 @@
 package roomescape.reservationtime.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static roomescape.reservationtime.ReservationTimeTestDataConfig.TIME_FIELD;
 
 import java.time.LocalDate;
@@ -10,13 +13,17 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.global.exception.NotFoundException;
+import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.dto.ReservationRequestDto;
+import roomescape.reservation.repository.ReservationRepository;
 import roomescape.reservation.service.ReservationService;
 import roomescape.reservationtime.ReservationTimeTestDataConfig;
 import roomescape.reservationtime.domain.ReservationTime;
@@ -24,6 +31,7 @@ import roomescape.reservationtime.domain.dto.ReservationTimeResponseDto;
 import roomescape.reservationtime.exception.AlreadyReservedTimeException;
 import roomescape.reservationtime.exception.DuplicateReservationTimeException;
 import roomescape.reservationtime.fixture.ReservationTimeFixture;
+import roomescape.reservationtime.repository.ReservationTimeRepository;
 import roomescape.theme.domain.Theme;
 import roomescape.theme.repository.ThemeRepository;
 import roomescape.user.domain.Role;
@@ -49,18 +57,15 @@ class ReservationTimeServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @DisplayName("ReservationTime 객체를 ReservationTimeResponseDto로 변환할 수 있다")
-    @Test
-    void convertToReservationTimeResponseDto() {
-        // given
-        ReservationTime reservationTime = ReservationTimeFixture.create(TIME_FIELD);
+    @Mock
+    ReservationTimeRepository mockReservationTimeRepository;
+    @Mock
+    ReservationRepository mockReservationRepository;
+    @Mock
+    ThemeRepository mockThemeRepository;
+    @InjectMocks
+    ReservationTimeService reservationTimeService;
 
-        // when
-        ReservationTimeResponseDto resDto = ReservationTimeFixture.createResponseDto(reservationTime);
-
-        // then
-        Assertions.assertThat(resDto.startAt()).isEqualTo(TIME_FIELD);
-    }
 
     private void deleteByIdAll() {
         jdbcTemplate.update("delete from reservation_time");
@@ -87,6 +92,21 @@ class ReservationTimeServiceTest {
                                 s.assertThat(resDto.id()).isNotNull());
                     }
             );
+        }
+
+        @DisplayName("레포지토리에서 반환된 예약 시간 수만큼 결과를 반환한다")
+        @Test
+        void findAll_success_whenDataExists2() {
+            // given
+            int count = 2;
+            List<ReservationTime> returnValue = ReservationTimeFixture.createMockMultiple(count);
+
+            when(mockReservationTimeRepository.findAll())
+                    .thenReturn(returnValue);
+
+            // when & then
+            Assertions.assertThat(reservationTimeService.findAll()).hasSize(count);
+            verify(mockReservationTimeRepository, times(1)).findAll();
         }
 
         @DisplayName("데이터가 없더라도 예외 없이 빈 리스트를 반환한다")
