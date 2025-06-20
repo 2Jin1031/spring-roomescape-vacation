@@ -1,32 +1,38 @@
 package roomescape.reservationtime.service;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static roomescape.reservationtime.ReservationTimeTestDataConfig.TIME_FIELD;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.global.exception.NotFoundException;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.dto.ReservationRequestDto;
+import roomescape.reservation.domain.dto.ReservationResponseDto;
 import roomescape.reservation.repository.ReservationRepository;
 import roomescape.reservation.service.ReservationService;
 import roomescape.reservationtime.ReservationTimeTestDataConfig;
 import roomescape.reservationtime.domain.ReservationTime;
+import roomescape.reservationtime.domain.dto.ReservationTimeRequestDto;
 import roomescape.reservationtime.domain.dto.ReservationTimeResponseDto;
 import roomescape.reservationtime.exception.AlreadyReservedTimeException;
 import roomescape.reservationtime.exception.DuplicateReservationTimeException;
@@ -65,6 +71,8 @@ class ReservationTimeServiceTest {
     ThemeRepository mockThemeRepository;
     @InjectMocks
     ReservationTimeService reservationTimeService;
+    @Autowired
+    private ReservationTimeRepository reservationTimeRepository;
 
 
     private void deleteByIdAll() {
@@ -75,30 +83,11 @@ class ReservationTimeServiceTest {
     @DisplayName("저장된 모든 예약 시간 불러오는 기능")
     class findAll {
 
-        @DisplayName("데이터가 있을 때 모든 예약 시간을 불러온다")
-        @Test
-        void findAll_success_whenDataExists() {
-            // given
-            // when
-            List<ReservationTimeResponseDto> resDtos = service.findAll();
-
-            // then
-            assertSoftly(s -> {
-                        s.assertThat(resDtos).hasSize(1);
-                        s.assertThat(resDtos)
-                                .extracting(ReservationTimeResponseDto::startAt)
-                                .contains(TIME_FIELD);
-                        resDtos.forEach(resDto ->
-                                s.assertThat(resDto.id()).isNotNull());
-                    }
-            );
-        }
-
         @DisplayName("레포지토리에서 반환된 예약 시간 수만큼 결과를 반환한다")
-        @Test
-        void findAll_success_whenDataExists2() {
+        @ParameterizedTest
+        @MethodSource("provideCounts")
+        void findAll_success_whenDataExists2(int count) {
             // given
-            int count = 2;
             List<ReservationTime> returnValue = ReservationTimeFixture.createMockMultiple(count);
 
             when(mockReservationTimeRepository.findAll())
@@ -109,17 +98,13 @@ class ReservationTimeServiceTest {
             verify(mockReservationTimeRepository, times(1)).findAll();
         }
 
-        @DisplayName("데이터가 없더라도 예외 없이 빈 리스트를 반환한다")
-        @Test
-        void findAll_success_whenNoData() {
-            // given
-            deleteByIdAll();
-
-            // when
-            List<ReservationTimeResponseDto> resDtos = service.findAll();
-
-            // then
-            Assertions.assertThat(resDtos).hasSize(0);
+        static Stream<Arguments> provideCounts() {
+            return Stream.of(
+                    Arguments.of(0),
+                    Arguments.of(1),
+                    Arguments.of(2),
+                    Arguments.of(10)
+            );
         }
     }
 
@@ -127,33 +112,34 @@ class ReservationTimeServiceTest {
     @DisplayName("예약 시간 추가 기능")
     class add {
 
-        @DisplayName("유효한 입력일 시 예약 시간이 추가된다")
+        private final ReservationTime reservationTime = new ReservationTime(1L, LocalTime.of(11, 11, 11));
+        private final ReservationTimeRequestDto reservationTimeRequestDto = new ReservationTimeRequestDto(LocalTime.of(11, 11, 11));
+
+        @DisplayName("유효한 입력일 시 repository.save() 로직이 실행된다")
         @Test
-        void add_success_whenValidInput() {
+        void add_success_whenValidInput1() {
             // given
-            LocalTime dummyTime1 = LocalTime.of(12, 33);
+            when(mockReservationTimeRepository.save(any(ReservationTime.class)))
+                    .thenReturn(reservationTime);
 
             // when
-            service.add(ReservationTimeFixture.createRequestDto(dummyTime1));
+            ReservationTimeResponseDto responseDto = reservationTimeService.add(reservationTimeRequestDto);
 
             // then
-            List<ReservationTimeResponseDto> resDtos = service.findAll();
-            Assertions.assertThat(resDtos)
-                    .extracting(ReservationTimeResponseDto::startAt)
-                    .contains(dummyTime1);
+            Assertions.assertThat(responseDto).isNotNull();
+            verify(mockReservationTimeRepository, times(1)).save(any(ReservationTime.class));
         }
 
         @DisplayName("이미 등록되어 있는 예약 시간으로 추가 요청 시 예외 발생한다")
         @Test
         void add_throwException_byDuplicationReservationTime() {
             // given
-            LocalTime dummyTime1 = LocalTime.of(12, 33);
-            service.add(ReservationTimeFixture.createRequestDto(dummyTime1));
+            when(mockReservationTimeRepository.save(any()))
+                    .thenThrow(new DataIntegrityViolationException(")"));
 
-            // when
-            // then
+            // when & then
             Assertions.assertThatThrownBy(
-                    () -> service.add(ReservationTimeFixture.createRequestDto(dummyTime1))
+                    () -> reservationTimeService.add(reservationTimeRequestDto)
             ).isInstanceOf(DuplicateReservationTimeException.class);
         }
     }

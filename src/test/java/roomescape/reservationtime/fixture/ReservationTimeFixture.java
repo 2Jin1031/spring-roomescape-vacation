@@ -20,6 +20,10 @@ public class ReservationTimeFixture {
         return requestDto.toEntity();
     }
 
+    public static ReservationTimeRequestDto createRequestDtoMock() {
+        return mock(ReservationTimeRequestDto.class);
+    }
+
     public static ReservationTime createMock() {
         return mock(ReservationTime.class);
     }
@@ -32,5 +36,9 @@ public class ReservationTimeFixture {
         return IntStream.range(0, count)
                 .mapToObj(i -> createMock())
                 .toList();
+    }
+
+    public static ReservationTimeResponseDto createResponseDtoMock() {
+        return mock(ReservationTimeResponseDto.class);
     }
 }
