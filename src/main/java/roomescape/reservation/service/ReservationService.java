@@ -106,7 +106,7 @@ public class ReservationService {
     public ReservationInfo cancelReservationAndReturnInfo(Long id) {
         Reservation oldReservation = findByIdOrThrow(id);
         repository.deleteById(id);
-        return new ReservationInfo(oldReservation.getDate(), oldReservation.getReservationTime(), oldReservation.getTheme());
+        return ReservationInfo.of(oldReservation);
     }
 
     @Transactional
